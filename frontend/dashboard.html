@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <h1 class="logo">Expense Tracker</h1>
+            <div class="user-profile" id="openProfileBtn" title="Open Profile Settings">
+                <div class="profile-avatar-wrap">
+                    <img id="profileAvatar" class="profile-avatar is-hidden" alt="Profile">
+                    <i id="profileAvatarFallback" class="fas fa-user-circle"></i>
+                </div>
+                <span id="profileName">User Profile</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <ul class="menu">
+                <li class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" data-page="manage-budget">
+                    <i class="fas fa-wallet"></i>
+                    <span>Manage Budget</span>
+                </li>
+                <li class="menu-item" data-page="add-category">
+                    <i class="fas fa-folder-plus"></i>
+                    <span>Add Category</span>
+                </li>
+                <li class="menu-item" data-page="transactions">
+                    <i class="fas fa-receipt"></i>
+                    <span>Transactions</span>
+                </li>
+            </ul>
+            <div class="menu-bottom">
+                <div class="menu-item" id="exportData">
+                    <i class="fas fa-download"></i>
+                    <span>Export Data</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="page-header">
+                    <h2>Dashboard</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" id="inputIncomeBtn">
+                            <i class="fas fa-dollar-sign"></i>
+                            Input Monthly Income
+                        </button>
+                        <button class="btn btn-primary" id="addExpenseBtn">
+                            <i class="fas fa-plus-circle"></i>
+                            Add Expense
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="card summary-card">
+                        <div class="card-icon blue">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>Total Balance</h3>
+                        <p class="amount" id="totalBalance">₱0.00</p>
+                    </div>
+                    <div class="card summary-card">
+                        <div class="card-icon green">
+                            <i class="fas fa-arrow-trend-up"></i>
+                        </div>
+                        <h3>Total Income</h3>
+                        <p class="amount" id="totalIncome">₱0.00</p>
+                    </div>
+                    <div class="card summary-card">
+                        <div class="card-icon red">
+                            <i class="fas fa-arrow-trend-down"></i>
+                        </div>
+                        <h3>Total Expenses</h3>
+                        <p class="amount" id="totalExpenses">₱0.00</p>
+                    </div>
+                    <div class="card summary-card">
+                        <div class="card-icon yellow">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <h3>Total Savings</h3>
+                        <p class="amount" id="totalSavings">₱0.00</p>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="card chart-card">
+                        <h3>Spending Overview</h3>
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                    <div class="card chart-card">
+                        <h3>Income vs Expense Trends</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Budget Section -->
+                <div class="budget-section">
+                    <div class="section-header">
+                        <h3>Budget Overview</h3>
+                        <button class="btn btn-success btn-sm" id="addSavingsBtn">
+                            <i class="fas fa-piggy-bank"></i>
+                            Add Savings
+                        </button>
+                    </div>
+                    <div class="budget-cards" id="budgetCards">
+                        <!-- Budget cards will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card transactions-card">
+                    <h3>Recent Transactions</h3>
+                    <div class="table-container">
+                        <table id="recentTransactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Transactions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div id="transactions-page" class="page">
+                <div class="page-header">
+                    <h2>All Transactions</h2>
+                    <button class="btn btn-primary" id="exportTransactionsBtn">
+                        <i class="fas fa-download"></i>
+                        Export Transactions
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table id="allTransactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- All transactions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Budget Page -->
+            <div id="manage-budget-page" class="page">
+                <h2>Manage Budget</h2>
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Tip:</strong> Set realistic budgets for each category to track your spending effectively.</p>
+                </div>
+                <div class="card" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px;">Set Budget</h3>
+                    <form id="setBudgetForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="budgetCategory" required>
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Budget Amount (PHP)</label>
+                                <input type="number" id="budgetAllocated" step="0.01" min="0" placeholder="₱0.00" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Budget
+                        </button>
+                    </form>
+                </div>
+                <div class="budget-cards" id="manageBudgetCards">
+                    <!-- Budget management cards will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Add Category Page -->
+            <div id="add-category-page" class="page">
+                <h2>Category Management</h2>
+                <div class="card">
+                    <h3>Add New Category</h3>
+                    <form id="addCategoryForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Category Name</label>
+                                <input type="text" id="categoryName" placeholder="e.g., Entertainment" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Color</label>
+                                <input type="color" id="categoryColor" value="#3B82F6">
+                            </div>
+                            <div class="form-group">
+                                <label>Icon (Emoji)</label>
+                                <input type="text" id="categoryIcon" placeholder="📁" maxlength="2" value="📁">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Category
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Existing Categories</h3>
+                    <div class="categories-grid" id="categoriesGrid">
+                        <!-- Categories will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Expense</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="addExpenseForm">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="expenseCategory" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount (PHP)</label>
+                    <input type="number" id="expenseAmount" step="0.01" placeholder="₱0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea id="expenseDescription" rows="3" placeholder="Enter description..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Add Expense</button>
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Input Income Modal -->
+    <div id="inputIncomeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Input Monthly Income</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="inputIncomeForm">
+                <div class="form-group">
+                    <label>Income Amount (PHP)</label>
+                    <input type="number" id="incomeAmount" step="0.01" placeholder="₱0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Source</label>
+                    <input type="text" id="incomeSource" placeholder="Salary, Freelance, etc." required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="incomeDate" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-success">Add Income</button>
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Budget Modal -->
+    <div id="editBudgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Budget - <span id="editBudgetCategory"></span></h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="editBudgetForm">
+                <input type="hidden" id="editBudgetId">
+                <div class="form-group">
+                    <label>Allocated Amount (PHP)</label>
+                    <input type="number" id="editBudgetAmount" step="0.01" placeholder="₱0.00" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Update Budget</button>
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Savings Modal -->
+    <div id="addSavingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add to Savings</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="addSavingsForm">
+                <div class="form-group">
+                    <label>Amount (PHP)</label>
+                    <input type="number" id="savingsAmount" step="0.01" placeholder="₱0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="savingsDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Note (Optional)</label>
+                    <input type="text" id="savingsNote" placeholder="e.g., Emergency fund">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-success">Add Savings</button>
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Profile Settings</h3>
+                <span class="close">&times;</span>
+            </div>
+
+            <form id="profilePictureForm">
+                <div class="profile-preview-row">
+                    <div class="profile-avatar-large-wrap">
+                        <img id="profileAvatarLarge" class="profile-avatar-large is-hidden" alt="Profile">
+                        <i id="profileAvatarLargeFallback" class="fas fa-user-circle"></i>
+                    </div>
+                    <p class="profile-hint">Upload a new profile picture (PNG, JPG, or WEBP up to 2MB).</p>
+                </div>
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <input id="profileImageInput" type="file" accept="image/png,image/jpeg,image/webp">
+                </div>
+                <div class="modal-buttons">
+                    <button id="uploadPictureBtn" type="submit" class="btn btn-primary">Upload Picture</button>
+                </div>
+            </form>
+
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input id="currentPassword" type="password" placeholder="Leave blank if account has no password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input id="newPassword" type="password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input id="confirmNewPassword" type="password" minlength="6" required>
+                </div>
+                <div class="modal-buttons">
+                    <button id="changePasswordBtn" type="submit" class="btn btn-success">Change Password</button>
+                </div>
+                <div class="modal-buttons">
+                    <button id="profileLogoutBtn" type="button" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </form>
+
+            <p id="profileMsg" class="profile-msg"></p>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/charts.js"></script>
+</body>
+</html>
