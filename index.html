@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="frontend/css/style.css" />
   <style>
     body.auth-page {
       overflow: auto;
@@ -305,7 +305,7 @@
       localStorage.removeItem("userProfileImage");
 
       window.history.replaceState({}, document.title, window.location.pathname);
-      window.location.href = "dashboard.html";
+      window.location.href = "frontend/dashboard.html";
     })();
 
  async function validateToken() {
@@ -318,7 +318,7 @@
       });
 
       if (res.ok) {
-        window.location.href = "dashboard.html";
+        window.location.href = "frontend/dashboard.html";
       } else {
         // token is invalid -> force logout
         localStorage.removeItem("token");
@@ -389,7 +389,7 @@
         localStorage.setItem("userName", data.user.name);
         if (data.user.profileImage) localStorage.setItem("userProfileImage", data.user.profileImage);
         else localStorage.removeItem("userProfileImage");
-        window.location.href = "dashboard.html";
+        window.location.href = "frontend/dashboard.html";
       } catch {
         authMsg.textContent = "Unable to connect to server";
       } finally {
@@ -426,7 +426,7 @@
         localStorage.setItem("userName", data.user.name);
         if (data.user.profileImage) localStorage.setItem("userProfileImage", data.user.profileImage);
         else localStorage.removeItem("userProfileImage");
-        window.location.href = "dashboard.html";
+        window.location.href = "frontend/dashboard.html";
       } catch {
         authMsg.textContent = "Unable to connect to server";
       } finally {
